@@ -1,22 +1,25 @@
-# Build the go application into a binary
-FROM golang:alpine AS builder
-RUN apk --update add ca-certificates
-WORKDIR /app
-COPY . ./
-RUN go mod tidy -diff
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o gatus .
+# Build the application
 
-# Run Tests inside docker image if you don't have a configured go environment
-#RUN apk update && apk add --virtual build-dependencies build-base gcc
-#RUN go test ./... -mod vendor
+# Selecting the base image: alpine chosen as its minimalist and security-oriented
+ FROM golang:1.26.4-alpine
 
-# Run the binary on an empty container
-FROM scratch
-COPY --from=builder /app/gatus .
-COPY --from=builder /app/config.yaml ./config/config.yaml
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-ENV GATUS_CONFIG_PATH=""
-ENV GATUS_LOG_LEVEL="INFO"
-ENV PORT="8080"
-EXPOSE ${PORT}
-ENTRYPOINT ["/gatus"]
+# Creating a directory inside the container where subsequent commands will be executed. Also allows for relative paths to be used instead of full file paths 
+ WORKDIR /app
+
+ # Copying the dependencies into the container first, to optimise Docker layer cache
+ COPY go.mod go.sum ./
+
+ # Install the dependencies into the container
+ RUN go mod download
+
+ # Copy the rest of the source code into the container
+ COPY . .
+
+ # Build/compile the application (the output of this is an executable binary called /docker-gs-ping)
+ RUN CGO_ENABLED=0 GOOS=linux go build -o /gatus
+
+ # Exposing port 8080
+ EXPOSE 8080
+
+ # Run command
+ CMD ["/gatus"]
