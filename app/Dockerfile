@@ -1,7 +1,7 @@
-# Build the application
+### Build the application ###
 
 # Selecting the base image: alpine chosen as its minimalist and security-oriented
- FROM golang:1.26.4-alpine
+ FROM golang:1.26.4-alpine AS build-stage
 
 # Creating a directory inside the container where subsequent commands will be executed. Also allows for relative paths to be used instead of full file paths 
  WORKDIR /app
@@ -18,8 +18,23 @@
  # Build/compile the application (the output of this is an executable binary called /docker-gs-ping)
  RUN CGO_ENABLED=0 GOOS=linux go build -o /gatus
 
+
+ ### Run the application ###
+ FROM alpine:latest
+ 
+ 
+ # Copy executable from build stage into release stage
+ COPY --from=build-stage /gatus /gatus
+ COPY config/config.yaml /config.yaml
+ 
+ # Inject environment variable into container
+ ENV GATUS_CONFIG_PATH=/config.yaml
+
  # Exposing port 8080
  EXPOSE 8080
 
  # Run command
  CMD ["/gatus"]
+
+
+ 
