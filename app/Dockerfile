@@ -20,7 +20,7 @@
 
 
  ### Run the application ###
- FROM alpine:latest
+ FROM gcr.io/distroless/static-debian13
  
  
  # Copy executable from build stage into release stage
