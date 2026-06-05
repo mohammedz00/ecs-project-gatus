@@ -20,7 +20,8 @@
 
 
  ### Run the application ###
- FROM gcr.io/distroless/static-debian13
+ #FROM gcr.io/distroless/static-debian13
+ FROM scratch
  
  
  # Copy executable from build stage into release stage
