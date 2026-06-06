@@ -37,7 +37,7 @@
  # Inject environment variable into container
  ENV GATUS_CONFIG_PATH=/config.yaml
 
- # Exposing port 8080
+ # Exposing port 8080 (more so just a comment for clarity)
  EXPOSE 8080
 
  # Run as non-root user
