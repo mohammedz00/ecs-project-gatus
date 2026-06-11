@@ -19,3 +19,9 @@ node_modules
 gatus
 config/config.yml
 config.yaml
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
