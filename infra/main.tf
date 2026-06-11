@@ -63,3 +63,13 @@ resource "aws_subnet" "private_subnet_b" {
     }
   
 }
+
+# Internet Gateway
+resource "aws_internet_gateway" "gatus-igw" {
+    vpc_id = aws_vpc.gatus-vpc.id
+
+    tags = {
+      Name = "gatus-igw" 
+    }
+  
+}
