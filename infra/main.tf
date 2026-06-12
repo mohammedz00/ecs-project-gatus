@@ -74,6 +74,7 @@ resource "aws_internet_gateway" "gatus-igw" {
   
 }
 
+# NAT Gateway
 resource "aws_nat_gateway" "gatus-natgw" {
   availability_mode = "regional"
   connectivity_type = "public"
@@ -84,3 +85,62 @@ resource "aws_nat_gateway" "gatus-natgw" {
     Name = "gatus-natgw"
   }
 }
+
+
+# Route tables
+
+# Public Route
+resource "aws_route_table" "public_route" {
+    vpc_id = aws_vpc.gatus-vpc.id
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.gatus-igw.id
+    }
+
+    tags = {
+      Name = "PublicRoute"
+    }
+  
+}
+
+# Private Route
+resource "aws_route_table" "private_route" {
+    vpc_id = aws_vpc.gatus-vpc.id
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_nat_gateway.gatus-natgw.id
+    }
+
+    tags = {
+      Name = "PrivateRoute"
+    }
+  
+}
+
+# Route table associations
+
+# Public route associations
+resource "aws_route_table_association" "public-route-association-a" {
+  subnet_id      = aws_subnet.public_subnet_a.id
+  route_table_id = aws_route_table.public_route.id
+}
+
+resource "aws_route_table_association" "public-route-association-b" {
+  subnet_id      = aws_subnet.public_subnet_b.id
+  route_table_id = aws_route_table.public_route.id
+}
+
+# Private route associations
+resource "aws_route_table_association" "private-route-association-a" {
+  subnet_id      = aws_subnet.private_subnet_a.id
+  route_table_id = aws_route_table.private_route.id
+}
+
+resource "aws_route_table_association" "private-route-association-b" {
+  subnet_id      = aws_subnet.private_subnet_b.id
+  route_table_id = aws_route_table.private_route.id
+}
+
+
