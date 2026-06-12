@@ -74,12 +74,18 @@ resource "aws_internet_gateway" "gatus-igw" {
   
 }
 
+# Elastic IP allocation
+resource "aws_eip" "natgw-eip" {
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.gatus-igw]
+}
+
 # NAT Gateway
 resource "aws_nat_gateway" "gatus-natgw" {
-  availability_mode = "regional"
-  connectivity_type = "public"
-  vpc_id = aws_vpc.gatus-vpc.id
-  depends_on = [ aws_internet_gateway.gatus-igw ]
+connectivity_type = "public"
+  allocation_id = aws_eip.natgw-eip.id
+  subnet_id = aws_subnet.public_subnet_a.id
+  depends_on = [aws_internet_gateway.gatus-igw]
 
   tags = {
     Name = "gatus-natgw"
