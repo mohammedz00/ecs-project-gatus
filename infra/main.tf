@@ -199,6 +199,46 @@ resource "aws_security_group" "container-sg" {
   
 }
 
+# Load balancer
+
+resource "aws_lb" "gatus-lb" {
+    name = "gatus-lb"
+    internal = false
+    load_balancer_type = "application"
+    security_groups = [ aws_security_group.load-balancer-sg.id ]
+    subnets = [ aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id ]
+    
+    tags = {
+      Name = "gatus-lb"
+    }
+  
+}
+
+resource "aws_lb_target_group" "gatus-lb-tg" {
+    name = "gatus-lb-tg"
+    port = 80
+    protocol = "HTTP"
+    vpc_id = aws_vpc.gatus-vpc.id
+
+    health_check {
+      path = "/"
+    }
+  
+}
+
+resource "aws_lb_listener" "gatus-lb-listener" {
+  load_balancer_arn = aws_lb.gatus-lb.arn
+  port = "80"
+  protocol = "HTTP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.gatus-lb-tg.arn
+  }
+
+
+}
+
 
 # ECS
 
