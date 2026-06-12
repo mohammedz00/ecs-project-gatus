@@ -166,6 +166,14 @@ resource "aws_security_group" "load-balancer-sg" {
     
   }
 
+  # Allow HTTPS traffic from anywhere
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   # Allow all traffic out of ALB
   egress {
     from_port        = 0
@@ -243,9 +251,23 @@ resource "aws_lb_listener" "gatus-lb-listener" {
     type = "forward"
     target_group_arn = aws_lb_target_group.gatus-lb-tg.arn
   }
+}
+
+resource "aws_lb_listener" "gatus-lb-listener-https" {
+  load_balancer_arn = aws_lb.gatus-lb.arn
+  port = "443"
+  protocol = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn = aws_acm_certificate.app-certificate.arn
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.gatus-lb-tg.arn
+  }
 
 
 }
+
 
 
 # ECS
