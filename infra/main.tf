@@ -144,6 +144,61 @@ resource "aws_route_table_association" "private-route-association-b" {
 }
 
 
+# Security groups
+
+# Load balancer security group
+resource "aws_security_group" "load-balancer-sg" {
+  name = "load-balancer-sg"
+  vpc_id = aws_vpc.gatus-vpc.id
+
+  # Allow HTTP traffic from anywhere
+  ingress {
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    
+  }
+
+  # Allow all traffic out of ALB
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    
+  }
+
+  tags = {
+    Name = "load-balancer-sg"
+  }
+}
+
+# Container security group (allows traffic only from the ALB)
+resource "aws_security_group" "container-sg" {
+    name = "container-sg"
+    vpc_id = aws_vpc.gatus-vpc.id
+
+    ingress {
+        from_port = 8080
+        to_port = 8080
+        protocol = "tcp"
+        security_groups = [aws_security_group.load-balancer-sg.id]
+    }
+
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    tags = {
+      Name = "container-sg"
+    }
+  
+}
+
 
 # ECS
 
@@ -219,3 +274,5 @@ resource "aws_ecs_task_definition" "gatus-task-definition" {
 
   
 }
+
+
