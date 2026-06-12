@@ -347,3 +347,28 @@ resource "aws_ecs_service" "gatus-service" {
     }
   
 }
+
+
+# Route 53
+resource "aws_route53_zone" "app" {
+    name = "app.zenudeen.com"
+
+    tags = {
+      Environment = "dev"
+    }
+  
+}
+
+resource "aws_route53_record" "app-a-record" {
+    zone_id = aws_route53_zone.app.id
+    name = "app.zenudeen.com"
+    type = "A"
+    
+    alias {
+      zone_id = aws_lb.gatus-lb.zone_id
+      name = aws_lb.gatus-lb.dns_name
+      evaluate_target_health = true
+    }
+  
+}
+
