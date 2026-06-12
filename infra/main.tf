@@ -73,3 +73,14 @@ resource "aws_internet_gateway" "gatus-igw" {
     }
   
 }
+
+resource "aws_nat_gateway" "gatus-natgw" {
+  availability_mode = "regional"
+  connectivity_type = "public"
+  vpc_id = aws_vpc.gatus-vpc.id
+  depends_on = [ aws_internet_gateway.gatus-igw ]
+
+  tags = {
+    Name = "gatus-natgw"
+  }
+}
