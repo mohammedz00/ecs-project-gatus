@@ -216,12 +216,14 @@ resource "aws_lb" "gatus-lb" {
 
 resource "aws_lb_target_group" "gatus-lb-tg" {
     name = "gatus-lb-tg"
-    port = 80
+    port = 8080
     protocol = "HTTP"
+    target_type = "ip"
     vpc_id = aws_vpc.gatus-vpc.id
 
     health_check {
       path = "/"
+      port = "8080"
     }
   
 }
@@ -316,3 +318,26 @@ resource "aws_ecs_task_definition" "gatus-task-definition" {
 }
 
 
+# # ECS service
+resource "aws_ecs_service" "gatus-service" {
+    name = "gatus-service"
+    cluster = aws_ecs_cluster.gatus-ecs-cluster.id
+    task_definition = aws_ecs_task_definition.gatus-task-definition.arn
+    desired_count = 2
+    launch_type = "FARGATE"
+    
+    
+
+    network_configuration {
+      subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+      security_groups = [ aws_security_group.container-sg.id ]
+      assign_public_ip = false
+    }
+
+    load_balancer {
+      target_group_arn = aws_lb_target_group.gatus-lb-tg.arn
+      container_port = 8080
+      container_name = "gatus-container"
+    }
+  
+}
