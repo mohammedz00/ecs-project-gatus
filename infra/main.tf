@@ -2,7 +2,7 @@
 # VPC
 resource "aws_vpc" "gatus-vpc" {
 
-    cidr_block = "10.0.0.0/16"
+    cidr_block = var.local_vpc_cidr
     instance_tenancy = "default"
     enable_dns_hostnames = true
     enable_dns_support = true
@@ -17,9 +17,9 @@ resource "aws_vpc" "gatus-vpc" {
 resource "aws_subnet" "public_subnet_a" {
 
     vpc_id = aws_vpc.gatus-vpc.id
-    cidr_block = "10.0.0.0/24"
+    cidr_block = var.public_subnet_cidr[0]
     map_public_ip_on_launch = true
-    availability_zone = "eu-west-1a"
+    availability_zone = var.availability_zones[0]
 
     tags = {
       Name = "PublicSubnetA"
@@ -30,8 +30,8 @@ resource "aws_subnet" "public_subnet_a" {
 resource "aws_subnet" "private_subnet_a" {
 
     vpc_id = aws_vpc.gatus-vpc.id
-    cidr_block = "10.0.1.0/24"
-    availability_zone = "eu-west-1a"
+    cidr_block = var.private_subnet_cidr[0]
+    availability_zone = var.availability_zones[0]
 
     tags = {
       Name = "PrivateSubnetA"
@@ -42,9 +42,9 @@ resource "aws_subnet" "private_subnet_a" {
 resource "aws_subnet" "public_subnet_b" {
 
     vpc_id = aws_vpc.gatus-vpc.id
-    cidr_block = "10.0.2.0/24"
+    cidr_block = var.public_subnet_cidr[1]
     map_public_ip_on_launch = true
-    availability_zone = "eu-west-1b"
+    availability_zone = var.availability_zones[1]
 
     tags = {
       Name = "PublicSubnetB"
@@ -55,8 +55,8 @@ resource "aws_subnet" "public_subnet_b" {
 resource "aws_subnet" "private_subnet_b" {
 
     vpc_id = aws_vpc.gatus-vpc.id
-    cidr_block = "10.0.3.0/24"
-    availability_zone = "eu-west-1b"
+    cidr_block = var.private_subnet_cidr[1]
+    availability_zone = var.availability_zones[1]
 
     tags = {
       Name = "PrivateSubnetB"
@@ -100,7 +100,7 @@ resource "aws_route_table" "public_route" {
     vpc_id = aws_vpc.gatus-vpc.id
 
     route {
-        cidr_block = "0.0.0.0/0"
+        cidr_block = var.all_traffic_cidr
         gateway_id = aws_internet_gateway.gatus-igw.id
     }
 
@@ -115,7 +115,7 @@ resource "aws_route_table" "private_route" {
     vpc_id = aws_vpc.gatus-vpc.id
 
     route {
-        cidr_block = "0.0.0.0/0"
+        cidr_block = var.all_traffic_cidr
         gateway_id = aws_nat_gateway.gatus-natgw.id
     }
 
@@ -162,7 +162,7 @@ resource "aws_security_group" "load-balancer-sg" {
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    cidr_blocks      = [var.all_traffic_cidr]
     
   }
 
@@ -171,7 +171,7 @@ resource "aws_security_group" "load-balancer-sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.all_traffic_cidr]
   }
 
   # Allow all traffic out of ALB
@@ -179,7 +179,7 @@ resource "aws_security_group" "load-balancer-sg" {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    cidr_blocks      = [var.all_traffic_cidr]
     
   }
 
@@ -204,7 +204,7 @@ resource "aws_security_group" "container-sg" {
         from_port = 0
         to_port = 0
         protocol = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
+        cidr_blocks = [var.all_traffic_cidr]
     }
 
     tags = {
