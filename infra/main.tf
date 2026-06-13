@@ -259,6 +259,7 @@ resource "aws_lb_listener" "gatus-lb-listener-https" {
   protocol = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
   certificate_arn = aws_acm_certificate.app-certificate.arn
+  depends_on = [ aws_acm_certificate_validation.app-cert-validation ]
 
   default_action {
     type = "forward"
