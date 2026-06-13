@@ -27,3 +27,8 @@ variable "availability_zones" {
     default = [ "eu-west-1a", "eu-west-1b" ]
   
 }
+
+variable "domain_name" {
+    type = string
+  
+}
