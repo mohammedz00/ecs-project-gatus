@@ -373,7 +373,7 @@ resource "aws_ecs_service" "gatus-service" {
 
 # Route 53
 resource "aws_route53_zone" "app" {
-    name = "app.zenudeen.com"
+    name = "zenudeens.com"
 
     tags = {
       Environment = "dev"
@@ -383,7 +383,7 @@ resource "aws_route53_zone" "app" {
 
 resource "aws_route53_record" "app-a-record" {
     zone_id = aws_route53_zone.app.id
-    name = "app.zenudeen.com"
+    name = "zenudeens.com"
     type = "A"
     
     alias {
@@ -413,7 +413,7 @@ resource "aws_route53_record" "cname" {
 
 # ACM
 resource "aws_acm_certificate" "app-certificate" {
-    domain_name = "app.zenudeen.com"
+    domain_name = "zenudeens.com"
     validation_method = "DNS"
 
     lifecycle {
