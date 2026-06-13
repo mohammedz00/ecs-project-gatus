@@ -1,3 +1,5 @@
+# S3 bucket remote backend setup
+
 resource "aws_s3_bucket" "remote_state" {
     bucket = "zenudeen-gatus-app-state"
     force_destroy = false
@@ -49,4 +51,21 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "remote_state_encr
     }
     bucket_key_enabled = true
   }
+}
+
+
+# ECR repository setup
+resource "aws_ecr_repository" "gatus-ecr-repo" {
+    name = "zenudeen-gatus-ecr"
+    image_tag_mutability = "MUTABLE"
+
+    encryption_configuration {
+
+     encryption_type = "AES256"
+    }
+    
+    image_scanning_configuration {
+    scan_on_push = true
+  }
+  
 }

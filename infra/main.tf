@@ -323,7 +323,7 @@ resource "aws_ecs_task_definition" "gatus-task-definition" {
 
         container_definitions = jsonencode([{
                 name : "gatus-container" # container name
-                image : "145523122776.dkr.ecr.eu-west-1.amazonaws.com/zenudeen/gatus:latest" # image pulled from ECR
+                image : "145523122776.dkr.ecr.eu-west-1.amazonaws.com/zenudeen-gatus-ecr:latest" # image pulled from ECR
                 essential : true # Requirement to have this image
                 portMappings : [
                     {
