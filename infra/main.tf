@@ -1,66 +1,83 @@
+# Terraform main.tf with modules
+
 
 # VPC
 
 module "vpc" {
-  source = "./modules/vpc"
-  local_vpc_cidr = var.local_vpc_cidr
-  availability_zones = var.availability_zones
-  public_subnet_cidr = var.public_subnet_cidr
+  source              = "./modules/vpc"
+  local_vpc_cidr      = var.local_vpc_cidr
+  availability_zones  = var.availability_zones
+  public_subnet_cidr  = var.public_subnet_cidr
   private_subnet_cidr = var.private_subnet_cidr
-  project_name = var.project_name
+  project_name        = var.project_name
 }
+
+# SG
+
 
 module "sg" {
   source = "./modules/sg"
   vpc_id = module.vpc.vpc_id
- 
+
 }
 
+# ALB
+
 module "alb" {
-  source = "./modules/alb"
-  vpc_id = module.vpc.vpc_id
-  public_subnet_a_id = module.vpc.public_subnet_ids[0]
-  public_subnet_b_id = module.vpc.public_subnet_ids[1]
-  load-balancer-sg-id = module.sg.lb-sg-id 
-  acm_app_cert_arn = module.acm.acm_app_cert_arn
+  source              = "./modules/alb"
+  vpc_id              = module.vpc.vpc_id
+  public_subnet_a_id  = module.vpc.public_subnet_ids[0]
+  public_subnet_b_id  = module.vpc.public_subnet_ids[1]
+  load-balancer-sg-id = module.sg.lb-sg-id
+  acm_app_cert_arn    = module.acm.acm_app_cert_arn
   app_cert_validation = module.acm.app_cert_validation
 }
 
+# ECS
+
+
 module "ecs" {
-  source = "./modules/ecs"
-  task_definition_family = var.task_definition_family
-  policy_arn = var.policy_arn
+  source                   = "./modules/ecs"
+  task_definition_family   = var.task_definition_family
+  policy_arn               = var.policy_arn
   requires_compatibilities = var.requires_compatibilities
-  network_mode = var.network_mode
-  ecs_cpu = var.ecs_cpu
-  ecs_memory = var.ecs_memory
-  container_port = var.container_port
-  host_port = var.host_port
-  ecr_image = var.ecr_image
-  private_subnet_a_id = module.vpc.private_subnet_ids[0]
-  private_subnet_b_id = module.vpc.private_subnet_ids[1]
-  container_sg_id = module.sg.container-sg-id
-  alb_target_group_arn = module.alb.lb_target_group_arn
-  desired_count = var.desired_count
-  project_name = var.project_name
+  network_mode             = var.network_mode
+  ecs_cpu                  = var.ecs_cpu
+  ecs_memory               = var.ecs_memory
+  container_port           = var.container_port
+  host_port                = var.host_port
+  ecr_image                = var.ecr_image
+  private_subnet_a_id      = module.vpc.private_subnet_ids[0]
+  private_subnet_b_id      = module.vpc.private_subnet_ids[1]
+  container_sg_id          = module.sg.container-sg-id
+  alb_target_group_arn     = module.alb.lb_target_group_arn
+  desired_count            = var.desired_count
+  project_name             = var.project_name
 }
 
 
+# Route 53
+
 module "route53" {
-  source = "./modules/route53"
-  domain_name = var.domain_name
-  lb_zone_id = module.alb.lb_zone_id
-  lb_dns_name = module.alb.lb_dns_name
+  source                       = "./modules/route53"
+  domain_name                  = var.domain_name
+  lb_zone_id                   = module.alb.lb_zone_id
+  lb_dns_name                  = module.alb.lb_dns_name
   acm_domain_validation_option = module.acm.domain_validation_options
 }
 
 
+# ACM
+
 module "acm" {
-  source = "./modules/acm"
-  domain_name = var.domain_name
+  source        = "./modules/acm"
+  domain_name   = var.domain_name
   route53_cname = module.route53.route53_cname
-  
+
 }
+
+
+# Terraform main.tf without modules
 
 # resource "aws_vpc" "gatus-vpc" {
 
@@ -72,7 +89,7 @@ module "acm" {
 #     tags = {
 #       Name = "gatus-vpc"
 #     }
-  
+
 # }
 
 # # Subnets
@@ -86,7 +103,7 @@ module "acm" {
 #     tags = {
 #       Name = "PublicSubnetA"
 #     }
-  
+
 # }
 
 # resource "aws_subnet" "private_subnet_a" {
@@ -98,7 +115,7 @@ module "acm" {
 #     tags = {
 #       Name = "PrivateSubnetA"
 #     }
-  
+
 # }
 
 # resource "aws_subnet" "public_subnet_b" {
@@ -111,7 +128,7 @@ module "acm" {
 #     tags = {
 #       Name = "PublicSubnetB"
 #     }
-  
+
 # }
 
 # resource "aws_subnet" "private_subnet_b" {
@@ -123,7 +140,7 @@ module "acm" {
 #     tags = {
 #       Name = "PrivateSubnetB"
 #     }
-  
+
 # }
 
 # # Internet Gateway
@@ -133,7 +150,7 @@ module "acm" {
 #     tags = {
 #       Name = "gatus-igw" 
 #     }
-  
+
 # }
 
 # # Elastic IP allocation
@@ -169,7 +186,7 @@ module "acm" {
 #     tags = {
 #       Name = "PublicRoute"
 #     }
-  
+
 # }
 
 # # Private Route
@@ -184,7 +201,7 @@ module "acm" {
 #     tags = {
 #       Name = "PrivateRoute"
 #     }
-  
+
 # }
 
 # # Route table associations
@@ -225,7 +242,7 @@ module "acm" {
 #     to_port          = 80
 #     protocol         = "tcp"
 #     cidr_blocks      = [var.all_traffic_cidr]
-    
+
 #   }
 
 #   # Allow HTTPS traffic from anywhere
@@ -242,7 +259,7 @@ module "acm" {
 #     to_port          = 0
 #     protocol         = "-1"
 #     cidr_blocks      = [var.all_traffic_cidr]
-    
+
 #   }
 
 #   tags = {
@@ -272,7 +289,7 @@ module "acm" {
 #     tags = {
 #       Name = "container-sg"
 #     }
-  
+
 # }
 
 # # Load balancer
@@ -283,11 +300,11 @@ module "acm" {
 #     load_balancer_type = "application"
 #     security_groups = [ aws_security_group.load-balancer-sg.id ]
 #     subnets = [ aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id ]
-    
+
 #     tags = {
 #       Name = "gatus-lb"
 #     }
-  
+
 # }
 
 # resource "aws_lb_target_group" "gatus-lb-tg" {
@@ -301,7 +318,7 @@ module "acm" {
 #       path = "/"
 #       port = "8080"
 #     }
-  
+
 # }
 
 # resource "aws_lb_listener" "gatus-lb-listener" {
@@ -344,7 +361,7 @@ module "acm" {
 #       value = "enabled"
 #       # Provide CloudWatch metrics and insights
 #     }
-  
+
 # }
 
 # # ECS Task Execution Role
@@ -392,10 +409,10 @@ module "acm" {
 #                         containerPort = 8080 
 #                         hostPort = 8080
 #                         # Application uses port 8080 so these are assigned accordingly
-                        
+
 #                     }
 #                 ]
-                     
+
 #             }
 #         ]
 #         )
@@ -405,7 +422,7 @@ module "acm" {
 #                 # specifying runtime requirements
 #             }
 
-  
+
 # }
 
 
@@ -416,8 +433,8 @@ module "acm" {
 #     task_definition = aws_ecs_task_definition.gatus-task-definition.arn
 #     desired_count = 2
 #     launch_type = "FARGATE"
-    
-    
+
+
 
 #     network_configuration {
 #       subnets = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
@@ -430,7 +447,7 @@ module "acm" {
 #       container_port = 8080
 #       container_name = "gatus-container"
 #     }
-  
+
 # }
 
 
@@ -441,20 +458,20 @@ module "acm" {
 #     tags = {
 #       Environment = "dev"
 #     }
-  
+
 # }
 
 # resource "aws_route53_record" "app-a-record" {
 #     zone_id = aws_route53_zone.app.id
 #     name = var.domain_name
 #     type = "A"
-    
+
 #     alias {
 #       zone_id = aws_lb.gatus-lb.zone_id
 #       name = aws_lb.gatus-lb.dns_name
 #       evaluate_target_health = true
 #     }
-  
+
 # }
 
 # resource "aws_route53_record" "cname" {
@@ -482,7 +499,7 @@ module "acm" {
 #     lifecycle {
 #     create_before_destroy = true
 #   }
-  
+
 # }
 
 # resource "aws_acm_certificate_validation" "app-cert-validation" {
