@@ -43,6 +43,16 @@ module "ecs" {
   project_name = var.project_name
 }
 
+
+module "route53" {
+  source = "./modules/route53"
+  domain_name = var.domain_name
+  lb_zone_id = module.alb.lb_zone_id
+  lb_dns_name = module.alb.lb_dns_name
+
+  
+}
+
 # resource "aws_vpc" "gatus-vpc" {
 
 #     cidr_block = var.local_vpc_cidr

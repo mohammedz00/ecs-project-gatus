@@ -97,3 +97,12 @@ variable "desired_count" {
     description = "The number of tasks to run"
   
 }
+
+
+# Route 53
+
+variable "domain_name" {
+    type = string
+    description = "The domain name"
+  
+}
