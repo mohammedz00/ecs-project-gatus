@@ -4,11 +4,6 @@ variable "local_vpc_cidr" {
   
 }
 
-variable "all_traffic_cidr" {
-    type = string
-  
-  
-}
 
 variable "public_subnet_cidr" {
     type = list(string)
@@ -28,12 +23,18 @@ variable "availability_zones" {
   
 }
 
-variable "domain_name" {
+variable "project_name" {
     type = string
+    description = "The name of the project"
   
 }
 
-variable "ecr_image" {
-  type = string
+# variable "domain_name" {
+#     type = string
+  
+# }
 
-}
+# variable "ecr_image" {
+#   type = string
+
+# }
