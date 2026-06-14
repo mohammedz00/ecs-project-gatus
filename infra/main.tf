@@ -12,6 +12,12 @@ module "vpc" {
   
 }
 
+module "sg" {
+  source = "./modules/sg"
+  vpc_id = module.vpc.vpc_id
+  
+}
+
 # resource "aws_vpc" "gatus-vpc" {
 
 #     cidr_block = var.local_vpc_cidr
