@@ -8,14 +8,20 @@ module "vpc" {
   public_subnet_cidr = var.public_subnet_cidr
   private_subnet_cidr = var.private_subnet_cidr
   project_name = var.project_name
-
-  
 }
 
 module "sg" {
   source = "./modules/sg"
   vpc_id = module.vpc.vpc_id
-  
+ 
+}
+
+module "alb" {
+  source = "./modules/alb"
+  vpc_id = module.vpc.vpc_id
+  public_subnet_a_id = module.vpc.public_subnet_ids[0]
+  public_subnet_b_id = module.vpc.public_subnet_ids[1]
+  load-balancer-sg-id = module.sg.lb-sg-id 
 }
 
 # resource "aws_vpc" "gatus-vpc" {
