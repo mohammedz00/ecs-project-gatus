@@ -22,6 +22,8 @@ module "alb" {
   public_subnet_a_id = module.vpc.public_subnet_ids[0]
   public_subnet_b_id = module.vpc.public_subnet_ids[1]
   load-balancer-sg-id = module.sg.lb-sg-id 
+  acm_app_cert_arn = module.acm.acm_app_cert_arn
+  app_cert_validation = module.acm.app_cert_validation
 }
 
 module "ecs" {
@@ -49,7 +51,14 @@ module "route53" {
   domain_name = var.domain_name
   lb_zone_id = module.alb.lb_zone_id
   lb_dns_name = module.alb.lb_dns_name
+  acm_domain_validation_option = module.acm.domain_validation_options
+}
 
+
+module "acm" {
+  source = "./modules/acm"
+  domain_name = var.domain_name
+  route53_cname = module.route53.route53_cname
   
 }
 

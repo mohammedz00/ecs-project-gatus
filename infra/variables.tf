@@ -31,10 +31,6 @@ variable "project_name" {
   
 }
 
-# variable "domain_name" {
-#     type = string
-  
-# }
 
 # ECS
 

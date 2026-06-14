@@ -23,3 +23,14 @@ variable "public_subnet_b_id" {
   
 }
 
+variable "acm_app_cert_arn" {
+    type = any
+    description = "The ACM app certificate ARN"
+  
+}
+
+variable "app_cert_validation" {
+    type = any
+    description = "ACM app cert validation"
+  
+}
