@@ -24,6 +24,25 @@ module "alb" {
   load-balancer-sg-id = module.sg.lb-sg-id 
 }
 
+module "ecs" {
+  source = "./modules/ecs"
+  task_definition_family = var.task_definition_family
+  policy_arn = var.policy_arn
+  requires_compatibilities = var.requires_compatibilities
+  network_mode = var.network_mode
+  ecs_cpu = var.ecs_cpu
+  ecs_memory = var.ecs_memory
+  container_port = var.container_port
+  host_port = var.host_port
+  ecr_image = var.ecr_image
+  private_subnet_a_id = module.vpc.private_subnet_ids[0]
+  private_subnet_b_id = module.vpc.private_subnet_ids[1]
+  container_sg_id = module.sg.container-sg-id
+  alb_target_group_arn = module.alb.lb_target_group_arn
+  desired_count = var.desired_count
+  project_name = var.project_name
+}
+
 # resource "aws_vpc" "gatus-vpc" {
 
 #     cidr_block = var.local_vpc_cidr
