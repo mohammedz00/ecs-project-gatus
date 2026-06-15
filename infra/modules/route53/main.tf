@@ -8,6 +8,24 @@ resource "aws_route53_zone" "app" {
 
 }
 
+resource "aws_route53domains_registered_domain" "name-servers" {
+  domain_name = "zenudeens.com"
+
+  name_server {
+    name = aws_route53_zone.app.name_servers[0]
+  }
+  name_server {
+    name = aws_route53_zone.app.name_servers[1]
+  }
+  name_server {
+    name = aws_route53_zone.app.name_servers[2]
+  }
+  name_server {
+    name = aws_route53_zone.app.name_servers[3]
+  }
+
+}
+
 resource "aws_route53_record" "app-a-record" {
   zone_id = aws_route53_zone.app.id
   name    = var.domain_name
