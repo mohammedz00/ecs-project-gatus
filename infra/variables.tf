@@ -102,3 +102,11 @@ variable "domain_name" {
   description = "The domain name"
 
 }
+
+# IAM
+
+variable "oidc-policy_arn" {
+    type = string
+    description = "The OIDC policy ARN"
+  
+}
