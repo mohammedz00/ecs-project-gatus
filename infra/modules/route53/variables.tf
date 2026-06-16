@@ -16,8 +16,8 @@ variable "lb_dns_name" {
 
 }
 
-variable "acm_domain_validation_option" {
-  type        = any
-  description = "The ACM domain validation option"
+# variable "acm_domain_validation_option" {
+#   type        = any
+#   description = "The ACM domain validation option"
 
-}
+# }

@@ -39,19 +39,3 @@ resource "aws_route53_record" "app-a-record" {
 
 }
 
-resource "aws_route53_record" "cname" {
-  for_each = {
-    for dvo in var.acm_domain_validation_option : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = aws_route53_zone.app.zone_id
-}
