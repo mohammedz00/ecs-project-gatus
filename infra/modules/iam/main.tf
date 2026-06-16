@@ -27,7 +27,7 @@ resource "aws_iam_role" "oidc-role" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:mohammedz00/ecs-gatus-project:*"
+            "token.actions.githubusercontent.com:sub" = "repo:mohammedz00/ecs-project-gatus:*"
           }
         }
       }
