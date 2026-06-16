@@ -38,8 +38,8 @@ jobs:
             REPOSITORY: zenudeen-gatus-ecr
             IMAGE_TAG: ${{ github.sha }}
           run: |
-           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-           docker build -t $REGISTRY/$REPOSITORY:latest .
+           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./app
+           docker build -t $REGISTRY/$REPOSITORY:latest ./app
            docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
            docker push $REGISTRY/$REPOSITORY:latest
 
