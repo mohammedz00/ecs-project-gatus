@@ -1,0 +1,50 @@
+name: Terraform destroy pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Confirm destroy infrastructure'
+        required: true
+        default: 'Do not destroy infrastructure'
+        type: choice
+        options:
+        - 'Do not destroy infrastructure'
+        - 'Destroy infrastructure'
+
+
+permissions: 
+    id-token: write
+    contents: read
+
+jobs:
+    terraform-destroy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout-code
+              uses: actions/checkout@v4
+
+            - name: confirm-destroy
+              run: |
+                if [ "${{ github.event.inputs.confirmation }}" != "Destroy infrastructure" ]; then
+                    echo "Infrastructure will not be destroyed"
+                    exit 1
+                fi
+                
+
+            - name: aws-configure
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+                aws-region: eu-west-1
+            
+            - name: setup-terraform
+              uses: hashicorp/setup-terraform@v4
+
+            - name: terraform-init
+              run: terraform init
+              working-directory: infra
+
+            - name: terraform-destroy
+              run: terraform destroy -auto-approve
+              working-directory: infra
