@@ -12,7 +12,7 @@ resource "aws_iam_openid_connect_provider" "oidc" {
 
 resource "aws_iam_role" "oidc-role" {
   name = "oidc-role"
-  max_session_duration = 3600
+  max_session_duration = 7200
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

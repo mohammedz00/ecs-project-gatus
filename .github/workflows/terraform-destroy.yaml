@@ -37,7 +37,7 @@ jobs:
               with:
                 role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
                 aws-region: eu-west-1
-                role-duration-seconds: 3600
+                role-duration-seconds: 7200
             
             - name: setup-terraform
               uses: hashicorp/setup-terraform@v4
