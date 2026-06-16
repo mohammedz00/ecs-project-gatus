@@ -2,9 +2,9 @@ name: Docker build and push image
 
 on:
  push:
-    branches: [master]
+    branches: [main]
     paths: 
-        - 'app/**'
+        - '../../app/**'
         - 'Dockerfile'
 
 permissions:
