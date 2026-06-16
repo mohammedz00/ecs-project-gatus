@@ -4,6 +4,10 @@ resource "aws_iam_openid_connect_provider" "oidc" {
 
   thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1", "1c58a3a8518e8759bf075b76b750d4f2df264fcd"]
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = {
     Service  = "github-actions"
     MangedBy = "terraform"
@@ -13,6 +17,9 @@ resource "aws_iam_openid_connect_provider" "oidc" {
 resource "aws_iam_role" "oidc-role" {
   name = "oidc-role"
   max_session_duration = 7200
+  lifecycle {
+    prevent_destroy = true
+  }
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
