@@ -46,7 +46,7 @@
  # Run command
  CMD ["/gatus"]
 
- # Test to trigger the docker pipeline
+ # Test to trigger the docker pipeline/workflow
 
 
  
