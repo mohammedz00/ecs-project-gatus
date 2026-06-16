@@ -42,20 +42,20 @@ resource "aws_lb_listener" "gatus-lb-listener-https" {
 }
 
 resource "aws_lb_listener" "https-redirect" {
-    load_balancer_arn = aws_lb.gatus-lb.arn
-    port = "80"
-    protocol = "HTTP"
+  load_balancer_arn = aws_lb.gatus-lb.arn
+  port              = "80"
+  protocol          = "HTTP"
 
-    default_action {
-      type = "redirect"
+  default_action {
+    type = "redirect"
 
-      redirect {
-        port = "443"
-        protocol = "HTTPS"
-        status_code = "HTTP_301"
-      }
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
     }
-  
+  }
+
 }
 
 # Original HTTP listener

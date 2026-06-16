@@ -1,13 +1,13 @@
 # S3 bucket remote backend setup
 
 resource "aws_s3_bucket" "remote_state" {
-    bucket = "zenudeen-gatus-app-state"
-    force_destroy = false
+  bucket        = "zenudeen-gatus-app-state"
+  force_destroy = false
 
-    tags = {
-      Name = "zenudeen-gatus-app-state"
-    }
-  
+  tags = {
+    Name = "zenudeen-gatus-app-state"
+  }
+
 }
 
 resource "aws_s3_bucket_public_access_block" "remote_state_access" {
@@ -34,20 +34,20 @@ resource "aws_s3_bucket_acl" "remote_state_acl" {
 }
 
 resource "aws_s3_bucket_versioning" "remote_state_versioning" {
-    bucket = aws_s3_bucket.remote_state.id
-    versioning_configuration {
-      status = "Enabled"
-    }
-  
+  bucket = aws_s3_bucket.remote_state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "remote_state_encryption" {
   bucket = aws_s3_bucket.remote_state.id
-  
+
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm     = "AES256"
+      sse_algorithm = "AES256"
     }
     bucket_key_enabled = true
   }
@@ -56,16 +56,16 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "remote_state_encr
 
 # ECR repository setup
 resource "aws_ecr_repository" "gatus-ecr-repo" {
-    name = "zenudeen-gatus-ecr"
-    image_tag_mutability = "MUTABLE"
+  name                 = "zenudeen-gatus-ecr"
+  image_tag_mutability = "MUTABLE"
 
-    encryption_configuration {
+  encryption_configuration {
 
-     encryption_type = "AES256"
-    }
-    
-    image_scanning_configuration {
+    encryption_type = "AES256"
+  }
+
+  image_scanning_configuration {
     scan_on_push = true
   }
-  
+
 }

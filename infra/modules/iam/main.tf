@@ -36,6 +36,6 @@ resource "aws_iam_role" "oidc-role" {
 }
 
 resource "aws_iam_role_policy_attachment" "oidc-role-policy-attachment" {
-  role = aws_iam_role.oidc-role.name
+  role       = aws_iam_role.oidc-role.name
   policy_arn = var.oidc-policy_arn
 }

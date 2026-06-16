@@ -79,9 +79,9 @@ module "acm" {
 # IAM (OIDC)
 
 module "iam" {
-  source = "./modules/iam"
+  source          = "./modules/iam"
   oidc-policy_arn = var.oidc-policy_arn
-  
+
 }
 
 
