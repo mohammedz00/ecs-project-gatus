@@ -1,0 +1,50 @@
+name: Terraform plan and apply
+
+on:
+ push:
+    branches: [master]
+
+    paths:
+        - 'infra/**'
+ workflow_dispatch:
+
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    terraform-plan-apply:
+     runs-on: ubuntu-latest
+     steps:
+        - name: checkout-code
+          uses: actions/checkout@v4
+        
+        - name: configure-aws
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+            aws-region: eu-west-1
+        
+        - name: setup-terraform
+          uses: hashicorp/setup-terraform@v4
+        
+        - name: terraform-init
+          run: terraform init
+          working-directory: infra
+
+        - name: terraform-format
+          run: terraform fmt -check
+          working-directory: infra
+
+        - name: terraform-validate
+          run: terraform validate
+          working-directory: infra
+
+        - name: terraform-plan
+          run: terraform plan
+          working-directory: infra
+
+        - name: terraform-apply
+          run: terraform apply -auto-approve
+          working-directory: infra
