@@ -21,7 +21,7 @@ resource "aws_lb_target_group" "gatus-lb-tg" {
   vpc_id      = var.vpc_id
 
   health_check {
-    path = "/"
+    path = "/health"
     port = "8080"
   }
 

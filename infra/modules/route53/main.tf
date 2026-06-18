@@ -9,7 +9,7 @@ resource "aws_route53_zone" "app" {
 }
 
 resource "aws_route53domains_registered_domain" "name-servers" {
-  domain_name = "zenudeens.com"
+  domain_name = "app.zenudeens.com"
 
   name_server {
     name = aws_route53_zone.app.name_servers[0]
