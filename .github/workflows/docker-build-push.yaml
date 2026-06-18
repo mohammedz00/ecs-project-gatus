@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 
-# add trivy
+
 jobs:
     docker-build-push-image:
       runs-on: ubuntu-latest
