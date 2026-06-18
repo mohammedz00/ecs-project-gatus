@@ -1,5 +1,5 @@
 name: Terraform plan and apply
-
+# checkov
 on:
  push:
     branches: [main]
@@ -19,6 +19,20 @@ jobs:
      steps:
         - name: checkout-code
           uses: actions/checkout@v4
+        
+        - name: setup-tflint
+          uses: terraform-linters/setup-tflint@v6
+          with:
+            tflint_version: v0.52.0
+            cache: true
+        
+        - name: tflint-init
+          run: tflint --init
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+
+        - name: run-tflint
+          run: tflint -f compact
         
         - name: configure-aws
           uses: aws-actions/configure-aws-credentials@v4
