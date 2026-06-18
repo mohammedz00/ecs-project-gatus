@@ -75,3 +75,11 @@ jobs:
         - name: terraform-apply
           run: terraform apply -auto-approve
           working-directory: infra
+
+        - name: confirm-destroy
+          run: |
+           health_check=$(curl -o /dev/null -s -w "%{http_code}\n" https://zenudeens.com)
+           if [ $health_check != 200 ]; then
+                    echo "Health check failed"
+                    exit 1
+           fi
