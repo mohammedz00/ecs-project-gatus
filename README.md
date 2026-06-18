@@ -18,7 +18,7 @@ This project demonstrates an end-to-end DevOps workflow built entirely from scra
 - **TLS** — automated certificate provisioning and DNS validation via ACM and Route53
 - **CI/CD** — three separate GitHub Actions pipelines with Trivy image scanning, tflint linting, and post-deploy health checks
 
-![App demo](assets/app_demo.gif)
+![App demo](assets/app_demo_img.png)
 
 ---
 
