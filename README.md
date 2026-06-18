@@ -18,7 +18,7 @@ This project demonstrates an end-to-end DevOps workflow built entirely from scra
 - **TLS** — automated certificate provisioning and DNS validation via ACM and Route53
 - **CI/CD** — three separate GitHub Actions pipelines with Trivy image scanning, tflint linting, and post-deploy health checks
 
-![App demo](assets\app_demo.gif)
+![App demo](assets/app_demo.gif)
 
 ---
 
@@ -180,7 +180,7 @@ All three pipelines authenticate to AWS using **OIDC**. GitHub Actions requests 
 
 ### Pipeline 2 — Terraform Plan and Apply
 
-![Terraform Plan and Apply](assets\terraform-plan-apply-pipeline.png)
+![Terraform Plan and Apply](assets/terraform-plan-apply-pipeline.png)
 
 **Trigger:** Push to `main` when `infra/` changes, or manual `workflow_dispatch`
 
@@ -199,7 +199,7 @@ All three pipelines authenticate to AWS using **OIDC**. GitHub Actions requests 
 
 ### Pipeline 3 — Terraform Destroy
 
-![Terraform Destroy](assets\terraform-destroy-pipeline.png)
+![Terraform Destroy](assets/terraform-destroy-pipeline.png)
 
 **Trigger:** Manual `workflow_dispatch` only, never runs automatically
 
