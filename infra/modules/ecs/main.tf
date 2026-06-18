@@ -41,7 +41,7 @@ resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy" {
 
 # ECS Task Definition
 resource "aws_ecs_task_definition" "gatus-task-definition" {
-  family                   = var.task_definition_family               # Tasl definition name
+  family                   = var.task_definition_family               # Task definition name
   requires_compatibilities = [var.requires_compatibilities]           # Uses fargate only
   network_mode             = var.network_mode                         # What network method to use
   cpu                      = var.ecs_cpu                              # 512 CPU refers to 0.5 CPU

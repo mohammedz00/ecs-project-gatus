@@ -1,5 +1,5 @@
+############################################################
 # VPC
-
 variable "local_vpc_cidr" {
   type = string
 
@@ -31,9 +31,9 @@ variable "project_name" {
 
 }
 
+############################################################
 
 # ECS
-
 variable "task_definition_family" {
   type        = string
   description = "Task definition family name"
@@ -94,17 +94,18 @@ variable "desired_count" {
 
 }
 
+############################################################
 
 # Route 53
-
 variable "domain_name" {
   type        = string
   description = "The domain name"
 
 }
 
-# IAM
+############################################################
 
+# IAM
 variable "oidc-policy_arn" {
   type        = string
   description = "The OIDC policy ARN"
