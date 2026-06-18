@@ -18,6 +18,8 @@ This project demonstrates an end-to-end DevOps workflow built entirely from scra
 - **TLS** — automated certificate provisioning and DNS validation via ACM and Route53
 - **CI/CD** — three separate GitHub Actions pipelines with Trivy image scanning, tflint linting, and post-deploy health checks
 
+![App demo](assets\app_demo.gif)
+
 ---
 
 ## Architecture
@@ -53,7 +55,6 @@ ECS-PROJECT/
 │   │   ├── acm/                         # ACM certificate and DNS validation
 │   │   ├── alb/                         # ALB, listeners, target group, HTTP redirect
 │   │   ├── ecs/                         # ECS cluster, task definition, service, IAM
-│   │   ├── iam/                         # OIDC provider and GitHub Actions role
 │   │   ├── route53/                     # Hosted zone and DNS records
 │   │   ├── sg/                          # Security groups for ALB and ECS
 │   │   └── vpc/                         # VPC, subnets, IGW, NAT Gateway, route tables
@@ -163,6 +164,8 @@ All three pipelines authenticate to AWS using **OIDC**. GitHub Actions requests 
 
 ### Pipeline 1 — Docker Build and Push
 
+![Docker Build and Push](assets/docker-build-push-pipeline.png)
+
 **Trigger:** Push to `main` when `app/` or `Dockerfile` changes
 
 | Step | Description |
@@ -174,9 +177,10 @@ All three pipelines authenticate to AWS using **OIDC**. GitHub Actions requests 
 | Trivy scan | Scan image for vulnerabilities — fails pipeline on CRITICAL findings |
 | Push to ECR | Push both SHA and `latest` tags to `zenudeen-gatus-ecr` |
 
-Trivy prevents vulnerable images from reaching ECR. If a CRITICAL CVE is detected the pipeline fails before the push step.
 
 ### Pipeline 2 — Terraform Plan and Apply
+
+![Terraform Plan and Apply](assets\terraform-plan-apply-pipeline.png)
 
 **Trigger:** Push to `main` when `infra/` changes, or manual `workflow_dispatch`
 
@@ -195,7 +199,9 @@ Trivy prevents vulnerable images from reaching ECR. If a CRITICAL CVE is detecte
 
 ### Pipeline 3 — Terraform Destroy
 
-**Trigger:** Manual `workflow_dispatch` only — never runs automatically
+![Terraform Destroy](assets\terraform-destroy-pipeline.png)
+
+**Trigger:** Manual `workflow_dispatch` only, never runs automatically
 
 Presents a confirmation dropdown before any AWS resources are touched. If "Destroy infrastructure" is not explicitly selected the pipeline exits immediately. Prevents accidental destruction.
 
@@ -225,8 +231,6 @@ Infrastructure is destroyed after use, so ongoing costs are negligible. The tabl
 | ACM | TLS certificate | Free |
 | S3 | Terraform state storage | ~$0.01 |
 | **Total** | | **~$70/month** |
-
-**Note on Regional NAT Gateway:** The Regional NAT Gateway simplifies architecture by providing AZ-agnostic outbound connectivity without managing one gateway per AZ. However the per-hour charge applies per AZ served ($0.045/hr each), so costs scale with AZ usage. For a low-traffic portfolio project with minimal data processed, the base hourly cost dominates. For production workloads with high egress, VPC endpoints for ECR and CloudWatch would significantly reduce NAT Gateway data processing charges.
 
 ---
 
@@ -299,17 +303,6 @@ git push origin main
 curl -s https://app.zenudeens.com/health
 # {"status":"UP"}
 ```
-
----
-
-## Screenshots
-
-> Add screenshots here:
-> - Gatus dashboard live at https://app.zenudeens.com
-> - GitHub Actions — successful Docker pipeline run with Trivy scan
-> - GitHub Actions — successful Terraform pipeline run with health check
-> - AWS ECS console showing running task
-> - ACM certificate showing Issued status
 
 ---
 
