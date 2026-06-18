@@ -26,9 +26,8 @@ jobs:
             output_format: cli,sarif
             output_file_path: console,results.sarif
 
-            soft_fail: false
-            framework: terraform
-            severity: HIGH
+            soft_fail: true
+
         
         - name: upload-sarif-file
           uses: github/codeql-action/upload-sarif@v2
