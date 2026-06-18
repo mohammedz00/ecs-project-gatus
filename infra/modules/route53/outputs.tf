@@ -5,7 +5,7 @@
 # }
 
 output "route53_zone_id" {
-    value = aws_route53_zone.app.zone_id
-    description = "Route53 hosted zone id"
-  
+  value       = aws_route53_zone.app.zone_id
+  description = "Route53 hosted zone id"
+
 }

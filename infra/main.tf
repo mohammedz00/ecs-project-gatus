@@ -59,10 +59,10 @@ module "ecs" {
 # Route 53
 
 module "route53" {
-  source                       = "./modules/route53"
-  domain_name                  = var.domain_name
-  lb_zone_id                   = module.alb.lb_zone_id
-  lb_dns_name                  = module.alb.lb_dns_name
+  source      = "./modules/route53"
+  domain_name = var.domain_name
+  lb_zone_id  = module.alb.lb_zone_id
+  lb_dns_name = module.alb.lb_dns_name
   # acm_domain_validation_option = module.acm.domain_validation_options
 }
 
@@ -70,8 +70,8 @@ module "route53" {
 # ACM
 
 module "acm" {
-  source        = "./modules/acm"
-  domain_name   = var.domain_name
+  source      = "./modules/acm"
+  domain_name = var.domain_name
   #route53_cname = module.route53.route53_cname
   route53_zone_id = module.route53.route53_zone_id
 

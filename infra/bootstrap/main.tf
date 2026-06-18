@@ -90,7 +90,7 @@ resource "aws_iam_openid_connect_provider" "oidc" {
 }
 
 resource "aws_iam_role" "oidc-role" {
-  name = "oidc-role"
+  name                 = "oidc-role"
   max_session_duration = 7200
   lifecycle {
     prevent_destroy = true
@@ -126,6 +126,6 @@ resource "aws_iam_role_policy_attachment" "oidc-role-policy-attachment" {
 variable "oidc-policy_arn" {
   type        = string
   description = "The OIDC policy ARN"
-  default = "arn:aws:iam::aws:policy/AdministratorAccess"
+  default     = "arn:aws:iam::aws:policy/AdministratorAccess"
 
 }

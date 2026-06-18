@@ -11,7 +11,7 @@ variable "domain_name" {
 # }
 
 variable "route53_zone_id" {
-    type = string
-    description = "Route53 hosted zone id"
-  
+  type        = string
+  description = "Route53 hosted zone id"
+
 }
