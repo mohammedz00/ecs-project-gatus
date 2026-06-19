@@ -44,7 +44,7 @@ jobs:
         - name: run-trivy-scan
           uses: aquasecurity/trivy-action@v0.36.0
           with:
-            image-ref: "145523122776.dkr.ecr.eu-west-1.amazonaws.com/zenudeen-gatus-ecr:latest"
+            image-ref: "${{secrets.ACCOUNT_ID}}.dkr.ecr.eu-west-1.amazonaws.com/zenudeen-gatus-ecr:latest"
             format: 'table'
             exit-code: '1'
             ignore-unfixed: true
