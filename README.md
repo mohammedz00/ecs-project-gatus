@@ -14,7 +14,7 @@ This project demonstrates an end-to-end DevOps workflow built entirely from scra
 - **Containerisation** — multi-stage Dockerfile using a `scratch` base image, reducing image size from 2.6GB to 80MB (a 97% reduction), with a non-root user for security
 - **Infrastructure as Code** — fully modularised Terraform across 6 modules with S3 native state locking
 - **Security** — OIDC authentication between GitHub Actions and AWS, no static credentials stored anywhere, non-root container user, minimal attack surface via scratch image
-- **Networking** — VPC with public/private subnet separation, Regional NAT Gateway, ALB with HTTP-to-HTTPS redirect
+- **Networking** — VPC with public/private subnet separation, NAT Gateway, ALB with HTTP-to-HTTPS redirect
 - **TLS** — automated certificate provisioning and DNS validation via ACM and Route53
 - **CI/CD** — three separate GitHub Actions pipelines with Trivy image scanning, tflint linting, and post-deploy health checks
 
@@ -100,6 +100,12 @@ The Dockerfile uses a two-stage build:
 
 ### Image Size
 
+Single Stage Image Size
+![Single stage image size](assets/single-stage-docker-image-size.png)
+
+Multi Stage Image Size
+![Multi stage image size](assets/multi-stage-docker-image-size.png)
+
 | Approach | Image Size |
 |----------|-----------|
 | Single-stage (ubuntu base) | 2.6GB |
@@ -120,7 +126,7 @@ All infrastructure is deployed in **eu-west-1 (Ireland)** and managed via Terraf
 - 2 public subnets (`eu-west-1a`, `eu-west-1b`) — hosts the ALB and NAT Gateway
 - 2 private subnets (`eu-west-1a`, `eu-west-1b`) — hosts ECS tasks
 - Internet Gateway for public subnet outbound traffic
-- **Regional NAT Gateway** — provides outbound internet access for private subnet resources (ECS pulling images from ECR, Gatus checking external endpoints) without binding to a single AZ
+- Nat Gateway — provides outbound internet access for private subnet resources (ECS pulling images from ECR, Gatus checking external endpoints)
 - Public route table: `0.0.0.0/0` → Internet Gateway
 - Private route table: `0.0.0.0/0` → NAT Gateway
 
