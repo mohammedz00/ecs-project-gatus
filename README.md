@@ -156,6 +156,29 @@ All infrastructure is deployed in **eu-west-1 (Ireland)** and managed via Terraf
 - IAM role with trust policy scoped to the specific GitHub repository — no other repository on GitHub can assume it
 - No static AWS credentials exist anywhere — GitHub Actions receives short-lived temporary credentials on every pipeline run
 
+
+
+## Bootstrap
+
+Before the main Terraform configuration or any CI/CD pipeline can run, a small set of prerequisite resources must exist. These live in `infra/bootstrap/` and are applied manually, once, from a local machine.
+
+The bootstrap configuration creates:
+
+- **S3 bucket** — remote backend for Terraform state, with native state locking (Terraform 1.10+, no DynamoDB table required)
+- **ECR repository** (`zenudeen-gatus-ecr`) — required before any image can be pushed or before ECS can reference an image in the main Terraform configuration
+- **OIDC identity provider** — registers GitHub Actions (`token.actions.githubusercontent.com`) as a trusted identity provider in AWS
+- **IAM role** — scoped via trust policy to this specific GitHub repository only, assumed by GitHub Actions at runtime to obtain short-lived credentials
+
+This separation exists because of a bootstrapping problem: the main infrastructure and CI/CD pipelines depend on these resources existing first. The pipelines cannot create the very credentials and registry they need to run. Bootstrap breaks that circular dependency by being applied manually, outside the automated pipeline, before anything else.
+
+```bash
+cd infra/bootstrap
+terraform init
+terraform apply -auto-approve
+```
+
+Bootstrap only needs to be run once per AWS account. After this, the IAM role ARN output should be copied into the `AWS_ROLE_ARN` GitHub Actions secret, and all subsequent infrastructure changes flow through the automated pipelines.
+
 ---
 
 ## CI/CD Pipelines
