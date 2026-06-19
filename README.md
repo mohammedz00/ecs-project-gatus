@@ -24,7 +24,7 @@ This project demonstrates an end-to-end DevOps workflow built entirely from scra
 
 ## Architecture
 
-> Add your architecture diagram here (Lucidchart / draw.io / Mermaid)
+![Architecture Diagram](assets/architecture-diagram.png)
 
 **Traffic flow:**
 ```
