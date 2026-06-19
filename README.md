@@ -156,13 +156,6 @@ All infrastructure is deployed in **eu-west-1 (Ireland)** and managed via Terraf
 - ACM certificate for `app.zenudeens.com` with automated DNS validation — Terraform creates the validation CNAME record in Route53 and waits for issuance before proceeding
 - A record alias pointing `app.zenudeens.com` to the ALB
 
-### OIDC and IAM (iam module + bootstrap)
-
-- GitHub Actions OIDC identity provider registered in AWS
-- IAM role with trust policy scoped to the specific GitHub repository — no other repository on GitHub can assume it
-- No static AWS credentials exist anywhere — GitHub Actions receives short-lived temporary credentials on every pipeline run
-
-
 
 ## Bootstrap
 
