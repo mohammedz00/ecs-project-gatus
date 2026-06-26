@@ -11,12 +11,12 @@ This project deploys Gatus on AWS ECS Fargate with full infrastructure as code, 
 
 This project demonstrates an end-to-end DevOps workflow built entirely from scratch:
 
-- **Containerisation** — multi-stage Dockerfile using a `scratch` base image, reducing image size from 2.6GB to 80MB (a 97% reduction), with a non-root user for security
-- **Infrastructure as Code** — fully modularised Terraform across 6 modules with S3 native state locking
-- **Security** — OIDC authentication between GitHub Actions and AWS, no static credentials stored anywhere, non-root container user, minimal attack surface via scratch image
-- **Networking** — VPC with public/private subnet separation, NAT Gateway, ALB with HTTP-to-HTTPS redirect
-- **TLS** — automated certificate provisioning and DNS validation via ACM and Route53
-- **CI/CD** — three separate GitHub Actions pipelines with Trivy image scanning, tflint linting, and post-deploy health checks
+- **Containerisation**: multi-stage Dockerfile using a `scratch` base image, reducing image size from 2.6GB to 80MB (a 97% reduction), with a non-root user for security
+- **Infrastructure as Code**: fully modularised Terraform across 6 modules with S3 native state locking
+- **Security**: OIDC authentication between GitHub Actions and AWS, no static credentials stored anywhere, non-root container user, minimal attack surface via scratch image
+- **Networking**: VPC with public/private subnet separation, NAT Gateway, ALB with HTTP-to-HTTPS redirect
+- **TLS**:automated certificate provisioning and DNS validation via ACM and Route53
+- **CI/CD**:three separate GitHub Actions pipelines with Trivy image scanning, tflint linting, and post-deploy health checks
 
 ![App demo](assets/app_demo_img.png)
 
@@ -132,8 +132,8 @@ All infrastructure is deployed in **eu-west-1 (Ireland)** and managed via Terraf
 
 ### Security Groups (sg module)
 
-- **ALB SG** — inbound HTTP (80) and HTTPS (443) from `0.0.0.0/0`, all outbound
-- **Container SG** — inbound port 8080 from ALB SG only, all outbound. ECS tasks are never directly reachable from the internet.
+- **ALB SG**: inbound HTTP (80) and HTTPS (443) from `0.0.0.0/0`, all outbound
+- **Container SG**: inbound port 8080 from ALB SG only, all outbound. ECS tasks are never directly reachable from the internet.
 
 ### Load Balancer (alb module)
 
@@ -163,10 +163,10 @@ Before the main Terraform configuration or any CI/CD pipeline can run, a small s
 
 The bootstrap configuration creates:
 
-- **S3 bucket** — remote backend for Terraform state, with native state locking (Terraform 1.10+, no DynamoDB table required)
-- **ECR repository** (`zenudeen-gatus-ecr`) — required before any image can be pushed or before ECS can reference an image in the main Terraform configuration
-- **OIDC identity provider** — registers GitHub Actions (`token.actions.githubusercontent.com`) as a trusted identity provider in AWS
-- **IAM role** — scoped via trust policy to this specific GitHub repository only, assumed by GitHub Actions at runtime to obtain short-lived credentials
+- **S3 bucket**: remote backend for Terraform state, with native state locking (Terraform 1.10+, no DynamoDB table required)
+- **ECR repository** (`zenudeen-gatus-ecr`): required before any image can be pushed or before ECS can reference an image in the main Terraform configuration
+- **OIDC identity provider**: registers GitHub Actions (`token.actions.githubusercontent.com`) as a trusted identity provider in AWS
+- **IAM role**: scoped via trust policy to this specific GitHub repository only, assumed by GitHub Actions at runtime to obtain short-lived credentials
 
 This separation exists because of a bootstrapping problem: the main infrastructure and CI/CD pipelines depend on these resources existing first. The pipelines cannot create the very credentials and registry they need to run. Bootstrap breaks that circular dependency by being applied manually, outside the automated pipeline, before anything else.
 
@@ -184,7 +184,7 @@ Bootstrap only needs to be run once per AWS account. After this, the IAM role AR
 
 All three pipelines authenticate to AWS using **OIDC**. GitHub Actions requests a signed JWT token, presents it to AWS STS, and receives temporary credentials scoped to the IAM role. Credentials expire after the job completes.
 
-### Pipeline 1 — Docker Build and Push
+### Pipeline 1: Docker Build and Push
 
 ![Docker Build and Push](assets/docker-build-push-pipeline.png)
 
@@ -200,7 +200,7 @@ All three pipelines authenticate to AWS using **OIDC**. GitHub Actions requests 
 | Push to ECR | Push both SHA and `latest` tags to `zenudeen-gatus-ecr` |
 
 
-### Pipeline 2 — Terraform Plan and Apply
+### Pipeline 2: Terraform Plan and Apply
 
 ![Terraform Plan and Apply](assets/terraform-plan-apply-pipeline.png)
 
@@ -219,7 +219,7 @@ All three pipelines authenticate to AWS using **OIDC**. GitHub Actions requests 
 | terraform apply | Apply changes with `-auto-approve` |
 | Health check | Curl `https://app.zenudeens.com/health` — fail pipeline if not 200 |
 
-### Pipeline 3 — Terraform Destroy
+### Pipeline 3: Terraform Destroy
 
 ![Terraform Destroy](assets/terraform-destroy-pipeline.png)
 
@@ -267,7 +267,7 @@ Infrastructure is destroyed after use, so ongoing costs are negligible. The tabl
 - Domain registered (this project uses Cloudflare for the root domain with NS delegation to Route53 for the subdomain)
 - GitHub repository
 
-### Step 1 — Bootstrap
+### Step 1: Bootstrap
 
 Bootstrap creates the S3 state bucket, ECR repository, and OIDC infrastructure. Run once manually from your local machine:
 
@@ -283,7 +283,7 @@ This creates:
 - GitHub Actions OIDC identity provider
 - IAM role for GitHub Actions
 
-### Step 2 — Configure GitHub Secret
+### Step 2: Configure GitHub Secret
 
 After bootstrap, copy the IAM role ARN from the Terraform output and add it as a GitHub Actions secret:
 
@@ -293,7 +293,7 @@ Go to: **GitHub repo → Settings → Secrets and variables → Actions → New 
 |--------|-------|
 | `AWS_ROLE_ARN` | ARN of the OIDC IAM role from bootstrap output |
 
-### Step 3 — Push Initial Docker Image
+### Step 3: Push Initial Docker Image
 
 An image must exist in ECR before Terraform deploys ECS. Build and push once manually:
 
@@ -307,11 +307,11 @@ docker tag zenudeen-gatus-ecr:latest <account-id>.dkr.ecr.eu-west-1.amazonaws.co
 docker push <account-id>.dkr.ecr.eu-west-1.amazonaws.com/zenudeen-gatus-ecr:latest
 ```
 
-### Step 4 — Configure DNS Delegation
+### Step 4: Configure DNS Delegation
 
 In Cloudflare, add NS records for `app.zenudeens.com` pointing to the four Route53 nameservers shown in your hosted zone. This delegates the subdomain to Route53 so ACM validation and A records resolve correctly.
 
-### Step 5 — Deploy Infrastructure
+### Step 5: Deploy Infrastructure
 
 Trigger Pipeline 2 manually via `workflow_dispatch`, or push a change to `infra/`:
 
@@ -319,7 +319,7 @@ Trigger Pipeline 2 manually via `workflow_dispatch`, or push a change to `infra/
 git push origin main
 ```
 
-### Step 6 — Verify
+### Step 6: Verify
 
 ```bash
 curl -s https://app.zenudeens.com/health
@@ -330,10 +330,10 @@ curl -s https://app.zenudeens.com/health
 
 ## Known Improvements
 
-- **Least-privilege IAM** — the GitHub Actions role uses `AdministratorAccess` for simplicity. A production setup would scope permissions to only the specific AWS actions Terraform requires.
-- **Image tag pinning** — ECS always pulls `:latest`. A more robust approach would use SSM Parameter Store to pass the exact commit SHA from the Docker pipeline to Terraform, ensuring ECS always runs the exact image built in that pipeline run.
-- **Gatus persistence** — Gatus stores monitoring history in memory by default. History is lost on container restart. A database backend (PostgreSQL or SQLite on EFS) would persist history across deployments.
-- **Multi-AZ NAT** — the Regional NAT Gateway provides flexibility but still incurs per-AZ charges. For a low-traffic project, a single zonal NAT gateway would be cheaper. For high-availability production, one NAT gateway per AZ is the standard pattern.
+- **Least-privilege IAM**: the GitHub Actions role uses `AdministratorAccess` for simplicity. A production setup would scope permissions to only the specific AWS actions Terraform requires.
+- **Image tag pinning**: ECS always pulls `:latest`. A more robust approach would use SSM Parameter Store to pass the exact commit SHA from the Docker pipeline to Terraform, ensuring ECS always runs the exact image built in that pipeline run.
+- **Gatus persistence**: Gatus stores monitoring history in memory by default. History is lost on container restart. A database backend (PostgreSQL or SQLite on EFS) would persist history across deployments.
+- **Multi-AZ NAT**: the Regional NAT Gateway provides flexibility but still incurs per-AZ charges. For a low-traffic project, a single zonal NAT gateway would be cheaper. For high-availability production, one NAT gateway per AZ is the standard pattern.
 
 ---
 
