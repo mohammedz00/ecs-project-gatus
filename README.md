@@ -1,7 +1,7 @@
 # End to end deployment of Gatus Health Monitoring App
 
 
-A production-grade deployment of [Gatus](https://github.com/TwiN/gatus), an open-source automated health monitoring dashboard written in Go. Gatus continuously checks configured endpoints on a schedule, evaluates conditions against the responses, and displays results on a real-time dashboard — alerting you when something goes down.
+A production-grade deployment of [Gatus](https://github.com/TwiN/gatus), an open-source automated health monitoring dashboard written in Go. Gatus continuously checks configured endpoints on a schedule, evaluates conditions against the responses, and displays results on a real-time dashboard, alerting you when something goes down.
 
 This project deploys Gatus on AWS ECS Fargate with full infrastructure as code, HTTPS via a custom domain, and three automated CI/CD pipelines using keyless OIDC authentication.
 
@@ -42,30 +42,30 @@ User → Route53 (app.zenudeens.com) → ALB (public subnets)
 ECS-PROJECT/
 ├── .github/
 │   └── workflows/
-│       ├── docker-build-push.yaml       # Build, scan, and push Docker image to ECR
-│       ├── terraform-destroy.yaml       # Manual destroy with confirmation gate
-│       └── terraform-plan-apply.yaml    # Lint, plan, apply, health check
-├── app/                                 # Gatus application and config
-├── assets/                              # Project assets and screenshots
+│       ├── docker-build-push.yaml       
+│       ├── terraform-destroy.yaml       
+│       └── terraform-plan-apply.yaml    
+├── app/                                 
+├── assets/                              
 ├── infra/
-│   ├── bootstrap/                       # One-time setup: S3 state, ECR, OIDC
+│   ├── bootstrap/                       
 │   │   ├── main.tf
 │   │   └── provider.tf
 │   ├── modules/
-│   │   ├── acm/                         # ACM certificate and DNS validation
-│   │   ├── alb/                         # ALB, listeners, target group, HTTP redirect
-│   │   ├── ecs/                         # ECS cluster, task definition, service, IAM
-│   │   ├── route53/                     # Hosted zone and DNS records
-│   │   ├── sg/                          # Security groups for ALB and ECS
-│   │   └── vpc/                         # VPC, subnets, IGW, NAT Gateway, route tables
-│   ├── .terraform.lock.hcl              # Provider version lock file
-│   ├── backend.tf                       # S3 remote state configuration
-│   ├── main.tf                          # Root module — wires all modules together
-│   ├── provider.tf                      # AWS provider configuration
-│   ├── terraform.tfvars                 # Variable values
-│   └── variables.tf                     # Root variable declarations
+│   │   ├── acm/                         
+│   │   ├── alb/                         
+│   │   ├── ecs/                         
+│   │   ├── route53/                     
+│   │   ├── sg/                          
+│   │   └── vpc/                         
+│   ├── .terraform.lock.hcl              
+│   ├── backend.tf                       
+│   ├── main.tf                          
+│   ├── provider.tf                      
+│   ├── terraform.tfvars                 
+│   └── variables.tf                     
 ├── .gitignore
-├── Dockerfile                           # Multi-stage scratch-based build
+├── Dockerfile                           
 ├── LICENSE
 └── README.md
 ```
@@ -153,7 +153,7 @@ All infrastructure is deployed in **eu-west-1 (Ireland)** and managed via Terraf
 ### TLS and DNS (acm + route53 modules)
 
 - Route53 hosted zone for `app.zenudeens.com`
-- ACM certificate for `app.zenudeens.com` with automated DNS validation — Terraform creates the validation CNAME record in Route53 and waits for issuance before proceeding
+- ACM certificate for `app.zenudeens.com` with automated DNS validation, Terraform creates the validation CNAME record in Route53 and waits for issuance before proceeding
 - A record alias pointing `app.zenudeens.com` to the ALB
 
 
